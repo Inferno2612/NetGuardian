@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NetGuardian</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  html, body { height: 100%; }
+  body { --state: var(--danger); }
+  .notice-shell {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 22px 26px;
+    position: relative;
+  }
+  .notice-shell .orb { width: 64px; height: 64px; margin-bottom: 16px; box-shadow: 0 0 0 7px color-mix(in srgb, var(--state) 7%, transparent), 0 0 30px color-mix(in srgb, var(--state) 35%, transparent); }
+  .notice-shell .orb svg { width: 28px; height: 28px; }
+  .notice-title { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; margin: 0 0 8px; }
+  .notice-text { color: var(--text-dim); font-size: 13.5px; margin: 0 0 18px; line-height: 1.55; }
+  .notice-app { color: var(--text); font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="notice-shell">
+    <div class="orb">
+      <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M12 8.5v4.2M12 15.6v.1"/></svg>
+    </div>
+    <p class="notice-title">Доступ заблокирован</p>
+    <p class="notice-text">
+      Приложение <span class="notice-app" id="appName">—</span> требует включённый VPN.<br/>
+      Включите VPN (Hiddify или Amnezia) и попробуйте снова.
+    </p>
+    <button class="btn primary" id="okBtn">Понятно</button>
+  </div>
+
+  <script>
+    const { getCurrentWindow } = window.__TAURI__.window;
+    const { listen } = window.__TAURI__.event;
+
+    function setAppName(name) {
+      document.getElementById("appName").textContent = name || "—";
+    }
+
+    // Имя приложения на момент открытия окна передаётся через query-параметр,
+    // чтобы не было гонки между открытием окна и первым событием.
+    const params = new URLSearchParams(location.search);
+    setAppName(params.get("app"));
+
+    // Повторные блокировки, пока окно уже открыто, обновляют текст через событие.
+    listen("notice-update", (event) => {
+      setAppName(event.payload?.app_name);
+    });
+
+    document.getElementById("okBtn").addEventListener("click", () => {
+      getCurrentWindow().close();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+[package]
+name = "netguardian"
+version = "0.1.0"
+description = "NetGuardian — мониторинг трафика VPN и контроль доступа"
+edition = "2021"
+default-run = "netguardian"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+netguardian-core = { path = "../core" }
+
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-shell = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-single-instance = "2"
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+sysinfo = { workspace = true }
+reqwest = { workspace = true }
+anyhow = { workspace = true }
+
+window-vibrancy = "0.5"
+urlencoding = "2"
+
+[target.'cfg(windows)'.dependencies]
+windows = { workspace = true }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
