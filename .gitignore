@@ -1,0 +1,8 @@
+/target
+/src-tauri/target
+/core/target
+/native-host/target
+Cargo.lock
+.DS_Store
+node_modules/
+dist/

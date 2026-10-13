@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NetGuardian</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-vpn="unknown">
+  <div class="shell">
+
+    <!-- ===== Левое меню ===== -->
+    <aside class="nav">
+      <div class="brand">
+        <img class="brand-mark" src="img/logo.png" alt="" />
+        <span class="brand-text">NetGuardian</span>
+      </div>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          Обзор
+        </button>
+        <button class="tab-btn" data-tab="blocking">
+          <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          Блокировка
+        </button>
+        <button class="tab-btn" data-tab="sites">
+          <svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          Сайты
+        </button>
+        <button class="tab-btn" data-tab="ip">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>
+          Как меня видят
+        </button>
+        <button class="tab-btn" data-tab="settings">
+          <svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+          Настройки
+        </button>
+      </nav>
+      <div class="nav-foot">NetGuardian 0.1</div>
+    </aside>
+
+    <!-- ===== Основная область ===== -->
+    <main class="stage">
+      <div class="stage-panel">
+
+        <!-- Обзор -->
+        <section class="panel active" id="panel-dashboard">
+          <div class="page-head">
+            <h1>Обзор</h1>
+            <p id="heroLine">Проверяю состояние VPN…</p>
+          </div>
+
+          <div class="grid">
+            <div class="card hero s5">
+              <div class="orb">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/>
+                  <path class="ic-on" d="M9 12l2 2 4-4"/>
+                  <path class="ic-off" d="M12 8.5v4.2M12 15.6v.1"/>
+                  <path class="ic-unk" d="M10.2 9.8a1.9 1.9 0 1 1 2.7 1.7c-.6.3-.9.8-.9 1.4M12 15.6v.1"/>
+                </svg>
+              </div>
+              <div>
+                <p class="hero-title" id="heroTitle">Проверка…</p>
+                <p class="hero-sub" id="heroSub">Определяю VPN-адаптер.</p>
+                <div class="chips">
+                  <span class="chip" id="chipAdapter">Адаптер: —</span>
+                  <span class="chip" id="chipApps">Защищено приложений: 0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card s7">
+              <div class="card-head">
+                <h2>Трафик в реальном времени</h2>
+                <select id="ifaceSelect" class="select"></select>
+              </div>
+              <div class="chart-wrap"><canvas id="trafficChart"></canvas></div>
+              <div class="legend">
+                <span class="legend-item"><i class="dot down"></i>Загрузка <b id="curDown">0 бит/с</b></span>
+                <span class="legend-item"><i class="dot up"></i>Отдача <b id="curUp">0 бит/с</b></span>
+              </div>
+            </div>
+
+            <div class="card tile down s3">
+              <div class="stat-label"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>Получено за час</div>
+              <div class="stat-value" id="hourRecv">—</div>
+            </div>
+            <div class="card tile up s3">
+              <div class="stat-label"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Отправлено за час</div>
+              <div class="stat-value" id="hourSent">—</div>
+            </div>
+            <div class="card tile down s3">
+              <div class="stat-label"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>Получено с загрузки ПК</div>
+              <div class="stat-value" id="bootRecv">—</div>
+            </div>
+            <div class="card tile up s3">
+              <div class="stat-label"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Отправлено с загрузки ПК</div>
+              <div class="stat-value" id="bootSent">—</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Блокировка -->
+        <section class="panel" id="panel-blocking">
+          <div class="page-head">
+            <h1>Блокировка</h1>
+            <p>Приложения из списка не работают, пока VPN выключен.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h2>Приложения</h2>
+              <span class="sub" id="appsCount"></span>
+            </div>
+            <div class="add-row">
+              <input id="appExeInput" class="input" placeholder="Файл, например telegram.exe" />
+              <input id="appDisplayInput" class="input" placeholder="Название (необязательно)" />
+              <button class="btn primary" id="addAppBtn">Добавить</button>
+            </div>
+            <div class="list" id="appsList"></div>
+            <p class="small" style="margin-top:14px">
+              Имя файла можно посмотреть в Диспетчере задач на вкладке «Подробности».
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Режимы блокировки</h3>
+            <p class="muted" style="margin:0 0 8px">
+              <b>Простая</b> — NetGuardian каждую секунду проверяет запущенные программы
+              и закрывает совпавшие вместе со всеми их процессами. Права администратора не нужны,
+              но приложение может на мгновение мигнуть на экране.
+            </p>
+            <p class="muted" style="margin:0 0 8px">
+              <b>Надёжная (IFEO)</b> — Windows вообще не даёт приложению запуститься.
+              Включается один раз с правами администратора. Для работы при включённом VPN
+              NetGuardian должен быть запущен от администратора: он временно снимает перехват,
+              пока VPN подключён.
+            </p>
+            <p class="muted" style="margin:0" id="adminHint"></p>
+          </div>
+
+          <!-- Блокировка ссылок в браузере временно отключена.
+               Чтобы вернуть: раскомментируйте блок ниже (код расширения и
+               команды blocked_domains_* в приложении сохранены).
+          <div class="card">
+            <div class="card-head"><h2>Ссылки в браузере</h2></div>
+            <div class="add-row">
+              <input id="domainInput" class="input" placeholder="example.com" />
+              <button class="btn primary" id="addDomainBtn">Добавить</button>
+            </div>
+            <div class="list" id="domainsList"></div>
+          </div>
+          -->
+        </section>
+
+        <!-- Сайты -->
+        <section class="panel" id="panel-sites">
+          <div class="page-head">
+            <h1>Мониторинг сайтов</h1>
+            <p>Доступность проверяется раз в 5 минут. Количество сайтов не ограничено.</p>
+          </div>
+          <div class="card">
+            <div class="add-row">
+              <input id="siteUrlInput" class="input" placeholder="example.com или https://example.com" />
+              <button class="btn primary" id="addSiteBtn">Добавить</button>
+            </div>
+            <div class="list">
+              <div class="row row-sites head"><span>Сайт</span><span>Статус</span><span>Код</span><span>Отклик</span><span>Проверен</span><span></span></div>
+            </div>
+            <div class="list" id="sitesList"></div>
+          </div>
+        </section>
+
+        <!-- Как меня видят -->
+        <section class="panel" id="panel-ip">
+          <div class="page-head">
+            <h1>Как меня видят</h1>
+            <p>Что о вас знают сайты в интернете прямо сейчас.</p>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3 style="margin:0">Внешний IP-адрес</h3>
+              <button class="btn" id="refreshIp">Обновить</button>
+            </div>
+            <div id="ipBody"><p class="muted">Нажмите «Обновить», чтобы узнать текущий IP и провайдера.</p></div>
+          </div>
+        </section>
+
+        <!-- Настройки -->
+        <section class="panel" id="panel-settings">
+          <div class="page-head">
+            <h1>Настройки</h1>
+            <p>Автозапуск и диагностика определения VPN.</p>
+          </div>
+          <div class="card">
+            <div class="setting">
+              <div>
+                <div class="title">Запускать при включении компьютера</div>
+                <div class="small">Нужно, чтобы блокировка работала сразу после входа в Windows.</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="chkAutostart" /><span></span></label>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h2>Сетевые адаптеры</h2>
+              <button class="btn" id="showAdapters">Показать</button>
+            </div>
+            <p class="muted" style="margin:0 0 12px">
+              Если VPN определяется неверно, пришлите имя нужного адаптера — подстроку для поиска можно поправить.
+            </p>
+            <div class="list" id="adaptersList"></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== Нижняя панель статуса ===== -->
+      <footer class="dock">
+        <div class="dock-state">
+          <span class="led"></span>
+          <div style="min-width:0">
+            <div class="dock-title" id="dockTitle">VPN: проверка…</div>
+            <div class="dock-sub" id="dockSub">&nbsp;</div>
+          </div>
+        </div>
+        <div class="dock-speed">
+          <span class="d">↓ <b id="dockDown">0</b></span>
+          <span class="u">↑ <b id="dockUp">0</b></span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
